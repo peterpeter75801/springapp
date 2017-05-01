@@ -3,7 +3,11 @@
 
         <h1>Add New Employee</h1>
        <form:form method="post" action="save">  
-        <table >  
+        <table >   
+         <tr>  
+          <td>Id : </td> 
+          <td><form:input path="id"  /></td>
+         </tr>  
          <tr>  
           <td>Name : </td> 
           <td><form:input path="name"  /></td>
