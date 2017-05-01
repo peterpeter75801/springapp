@@ -13,12 +13,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.javatpoint.beans.Emp;
 import com.javatpoint.dao.EmpDao;
+import com.javatpoint.dao.EmpRepository;
 
 @Controller
 public class EmpController {
     
     @Autowired
     EmpDao dao;//will inject dao from xml file
+    
+    @Autowired
+    EmpRepository empRepository;
     
     /*It displays a form to input data, here "command" is a reserved request attribute
      *which is used to display object data into form
@@ -33,14 +37,16 @@ public class EmpController {
      *  because default request is GET*/
     @RequestMapping(value="/save",method = RequestMethod.POST)
     public ModelAndView save(@ModelAttribute("emp") Emp emp){
-        dao.save(emp);
+        //dao.save(emp);
+        empRepository.save(emp);
         return new ModelAndView("redirect:/viewemp");//will redirect to viewemp request mapping
     }
     
     /* It provides list of employees in model object */
     @RequestMapping("/viewemp")
     public ModelAndView viewemp(){
-        List<Emp> list=dao.getEmployees();
+        //List<Emp> list=dao.getEmployees();
+        List<Emp> list=(List<Emp>)empRepository.findAll();
         return new ModelAndView("viewemp","list",list);
     }
     
@@ -48,21 +54,31 @@ public class EmpController {
      * The @PathVariable puts URL data into variable.*/
     @RequestMapping(value="/editemp/{id}")
     public ModelAndView edit(@PathVariable int id){
-        Emp emp=dao.getEmpById(id);
+        //Emp emp=dao.getEmpById(id);
+        Emp emp=empRepository.findOne(id);
         return new ModelAndView("empeditform","command",emp);
     }
     
     /* It updates model object. */
     @RequestMapping(value="/editsave",method = RequestMethod.POST)
     public ModelAndView editsave(@ModelAttribute("emp") Emp emp){
-        dao.update(emp);
+        //dao.update(emp);
+        empRepository.save(emp);
         return new ModelAndView("redirect:/viewemp");
     }
     
     /* It deletes record for the given id in URL and redirects to /viewemp */
     @RequestMapping(value="/deleteemp/{id}",method = RequestMethod.GET)
     public ModelAndView delete(@PathVariable int id){
-        dao.delete(id);
+        //dao.delete(id);
+        empRepository.delete(id);
         return new ModelAndView("redirect:/viewemp");
     }
+    
+    /**
+     * Issue urls:
+     * - http://coderevisited.com/beginng-with-spring-data-jpa/
+     * - http://blog.csdn.net/cktmyh/article/details/50593925
+     * - http://stackoverflow.com/questions/9136202/defining-hibernateexceptiontranslator-no-persistence-exception-translators-foun
+     */
 }
